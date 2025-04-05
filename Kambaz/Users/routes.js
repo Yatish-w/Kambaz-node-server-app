@@ -1,5 +1,5 @@
 import * as dao from "./dao.js";
-import * as coursesDao from "../Courses/dao.js";
+import * as courseDao from "../Courses/dao.js";
 import * as enrollmentsDao from "../Enrollments/dao.js";
 
 export default function UserRoutes(app) {
@@ -78,18 +78,32 @@ export default function UserRoutes(app) {
     };
 
     const findCoursesForUser = async (req, res) => {
-        const currentUser = req.session["currentUser"];
-        if (!currentUser) {
-            res.status(401).json({ message: "Please sign in first" });
-            return;
+        try {
+            if (!req.session.currentUser) {
+                res.status(401).json({ message: "Not logged in" });
+                return;
+            }
+
+            const user = await dao.findUserById(req.session.currentUser._id);
+            if (!user) {
+                res.status(404).json({ message: "User not found" });
+                return;
+            }
+
+            let courses;
+            if (user.role === "FACULTY") {
+                // Faculty can see all courses
+                courses = await courseDao.findAllCourses();
+            } else {
+                // Students and TAs only see enrolled courses
+                courses = await courseDao.findCoursesForEnrolledUser(user._id);
+            }
+            
+            res.json(courses);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: "Error finding courses" });
         }
-        let courses;
-        if (currentUser.role === "FACULTY") {
-            courses = await coursesDao.findAllCourses();
-        } else {
-            courses = await coursesDao.findCoursesForEnrolledUser(currentUser._id);
-        }
-        res.json(courses);
     };
 
     const createCourse = async (req, res) => {
@@ -100,7 +114,7 @@ export default function UserRoutes(app) {
                 return;
             }
 
-            const newCourse = await coursesDao.createCourse(req.body);
+            const newCourse = await Promise.resolve(courseDao.createCourse(req.body));
             const enrollment = await enrollmentsDao.createEnrollment({
                 user: currentUser._id,
                 course: newCourse._id

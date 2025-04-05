@@ -9,51 +9,26 @@ import EnrollmentRoutes from "./Kambaz/Enrollments/routes.js";
 import session from "express-session";
 const app = express();
 
-// Configure CORS before other middleware
 app.use(
     cors({
         credentials: true,
-        origin: function(origin, callback) {
-            const allowedOrigins = [
-                'https://a5--kambaz-react-web-app-yw.netlify.app',
-                'https://kambaz-react-web-app-yw.netlify.app',
-                'http://localhost:5173'
-            ];
-            // Check if origin is allowed or if it's undefined (for same-origin requests)
-            if (!origin || allowedOrigins.some(allowed => origin.startsWith(allowed))) {
-                callback(null, origin);
-            } else {
-                callback(new Error('Not allowed by CORS'));
-            }
-        },
-        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-        allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-        exposedHeaders: ['Access-Control-Allow-Origin'],
-        optionsSuccessStatus: 204,
-        preflightContinue: false
+        origin: process.env.NETLIFY_URL || "http://localhost:5173",
     })
 );
-
-// Add security headers middleware
-app.use((req, res, next) => {
-    res.header('X-Content-Type-Options', 'nosniff');
-    res.header('X-Frame-Options', 'DENY');
-    res.header('X-XSS-Protection', '1; mode=block');
-    next();
-});
-
-// Configure session after CORS
+ // make sure cors is used right after creating the app
 const sessionOptions = {
     secret: process.env.SESSION_SECRET || "kambaz",
     resave: false,
     saveUninitialized: false,
-    proxy: true,
-    cookie: {
+};
+if (process.env.NODE_ENV !== "development") {
+    sessionOptions.proxy = true;
+    sessionOptions.cookie = {
         sameSite: "none",
         secure: true,
-        maxAge: 24 * 60 * 60 * 1000 // 24 hours
-    }
-};
+        domain: process.env.NODE_SERVER_DOMAIN,
+    };
+}
 app.use(session(sessionOptions));
 app.use(express.json());
 
