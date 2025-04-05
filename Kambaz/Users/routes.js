@@ -78,32 +78,18 @@ export default function UserRoutes(app) {
     };
 
     const findCoursesForUser = async (req, res) => {
-        try {
-            if (!req.session.currentUser) {
-                res.status(401).json({ message: "Not logged in" });
-                return;
-            }
-
-            const user = await dao.findUserById(req.session.currentUser._id);
-            if (!user) {
-                res.status(404).json({ message: "User not found" });
-                return;
-            }
-
-            let courses;
-            if (user.role === "FACULTY") {
-                // Faculty can see all courses
-                courses = await Promise.resolve(courseDao.findAllCourses());
-            } else {
-                // Students and TAs only see enrolled courses
-                courses = await Promise.resolve(courseDao.findCoursesForEnrolledUser(user._id));
-            }
-            
-            res.json(courses);
-        } catch (error) {
-            console.error(error);
-            res.status(500).json({ message: "Error finding courses" });
+        const currentUser = req.session["currentUser"];
+        if (!currentUser) {
+            res.status(401).json({ message: "Please sign in first" });
+            return;
         }
+        let courses;
+        if (currentUser.role === "FACULTY") {
+            courses = await courseDao.findAllCourses();
+        } else {
+            courses = await courseDao.findCoursesForEnrolledUser(currentUser._id);
+        }
+        res.json(courses);
     };
 
     const createCourse = async (req, res) => {
