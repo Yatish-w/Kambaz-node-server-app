@@ -9,32 +9,31 @@ import EnrollmentRoutes from "./Kambaz/Enrollments/routes.js";
 import session from "express-session";
 const app = express();
 
+// Configure CORS first
 app.use(
     cors({
         credentials: true,
         origin: [
             process.env.NETLIFY_URL || "http://localhost:5173",
-            "https://a5--kambaz-react-web-app-yw.netlify.app"
+            "https://a5--kambaz-react-web-app-yw.netlify.app",
+            "https://a5-kambaz-react-web-app-yw.netlify.app"
         ],
     })
 );
- // make sure cors is used right after creating the app
+
+// Configure session
 const sessionOptions = {
-    secret: process.env.SESSION_SECRET || "kambaz",
+    secret: "kambaz",
     resave: false,
     saveUninitialized: false,
     cookie: {
         sameSite: "none",
         secure: true,
-    }
+    },
+    proxy: true
 };
-if (process.env.NODE_ENV !== "development") {
-    sessionOptions.proxy = true;
-    sessionOptions.cookie = {
-        sameSite: "none",
-        secure: true,
-    };
-}
+
+app.set('trust proxy', 1); // trust first proxy
 app.use(session(sessionOptions));
 app.use(express.json());
 
