@@ -13,7 +13,11 @@ const app = express();
 app.use(
     cors({
         credentials: true,
-        origin: true, // Allow all origins, will be restricted by credentials
+        origin: [
+            'https://a5--kambaz-react-web-app-yw.netlify.app',
+            'https://kambaz-react-web-app-yw.netlify.app',
+            process.env.NODE_ENV === 'development' ? 'http://localhost:5173' : null
+        ].filter(Boolean),
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization'],
         optionsSuccessStatus: 204
