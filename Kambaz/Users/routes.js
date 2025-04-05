@@ -1,5 +1,5 @@
 import * as dao from "./dao.js";
-import * as courseDao from "../Courses/dao.js";
+import * as coursesDao from "../Courses/dao.js";
 import * as enrollmentsDao from "../Enrollments/dao.js";
 
 export default function UserRoutes(app) {
@@ -85,9 +85,9 @@ export default function UserRoutes(app) {
         }
         let courses;
         if (currentUser.role === "FACULTY") {
-            courses = await courseDao.findAllCourses();
+            courses = await coursesDao.findAllCourses();
         } else {
-            courses = await courseDao.findCoursesForEnrolledUser(currentUser._id);
+            courses = await coursesDao.findCoursesForEnrolledUser(currentUser._id);
         }
         res.json(courses);
     };
@@ -100,7 +100,7 @@ export default function UserRoutes(app) {
                 return;
             }
 
-            const newCourse = await Promise.resolve(courseDao.createCourse(req.body));
+            const newCourse = await coursesDao.createCourse(req.body);
             const enrollment = await enrollmentsDao.createEnrollment({
                 user: currentUser._id,
                 course: newCourse._id
