@@ -69,12 +69,27 @@ export default function UserRoutes(app) {
     //app.post("/api/users/signout", signout);
 
     const profile = async (req, res) => {
-        const currentUser = req.session["currentUser"];
-        if (!currentUser) {
-            res.sendStatus(401);
-            return;
+        try {
+            const currentUser = req.session["currentUser"];
+            if (!currentUser) {
+                res.status(401).json({ message: "Not logged in" });
+                return;
+            }
+            
+            // Fetch fresh user data from database
+            const user = await dao.findUserById(currentUser._id);
+            if (!user) {
+                res.status(404).json({ message: "User not found" });
+                return;
+            }
+            
+            // Update session with fresh user data
+            req.session["currentUser"] = user;
+            res.json(user);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: "Error fetching profile" });
         }
-        res.json(currentUser);
     };
 
     const findCoursesForUser = async (req, res) => {
