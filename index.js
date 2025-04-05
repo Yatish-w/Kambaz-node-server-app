@@ -13,16 +13,34 @@ const app = express();
 app.use(
     cors({
         credentials: true,
-        origin: [
-            'https://a5--kambaz-react-web-app-yw.netlify.app',
-            'https://kambaz-react-web-app-yw.netlify.app',
-            process.env.NODE_ENV === 'development' ? 'http://localhost:5173' : null
-        ].filter(Boolean),
+        origin: function(origin, callback) {
+            const allowedOrigins = [
+                'https://a5--kambaz-react-web-app-yw.netlify.app',
+                'https://kambaz-react-web-app-yw.netlify.app',
+                'http://localhost:5173'
+            ];
+            // Check if origin is allowed or if it's undefined (for same-origin requests)
+            if (!origin || allowedOrigins.some(allowed => origin.startsWith(allowed))) {
+                callback(null, origin);
+            } else {
+                callback(new Error('Not allowed by CORS'));
+            }
+        },
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-        allowedHeaders: ['Content-Type', 'Authorization'],
-        optionsSuccessStatus: 204
+        allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+        exposedHeaders: ['Access-Control-Allow-Origin'],
+        optionsSuccessStatus: 204,
+        preflightContinue: false
     })
 );
+
+// Add security headers middleware
+app.use((req, res, next) => {
+    res.header('X-Content-Type-Options', 'nosniff');
+    res.header('X-Frame-Options', 'DENY');
+    res.header('X-XSS-Protection', '1; mode=block');
+    next();
+});
 
 // Configure session after CORS
 const sessionOptions = {
