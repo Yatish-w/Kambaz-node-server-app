@@ -26,11 +26,6 @@ const sessionOptions = {
     secret: "kambaz",
     resave: false,
     saveUninitialized: false,
-    cookie: {
-        sameSite: "none",
-        secure: true,
-    },
-    proxy: true
 };
 
 app.set('trust proxy', 1); // trust first proxy
