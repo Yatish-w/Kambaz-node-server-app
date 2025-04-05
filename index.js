@@ -26,6 +26,11 @@ const sessionOptions = {
     secret: "kambaz",
     resave: false,
     saveUninitialized: false,
+    proxy: true,
+    cookie: {
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        secure: process.env.NODE_ENV === "production"
+    }
 };
 
 app.set('trust proxy', 1); // trust first proxy
