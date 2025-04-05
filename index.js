@@ -12,13 +12,9 @@ const app = express();
 app.use(
     cors({
         credentials: true,
-        origin: [
-            process.env.NETLIFY_URL || "http://localhost:5173",
-            "https://a5--kambaz-react-web-app-yw.netlify.app"
-        ],
+        origin: "https://a5--kambaz-react-web-app-yw.netlify.app",
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization'],
-        exposedHeaders: ['Content-Range', 'X-Content-Range'],
         optionsSuccessStatus: 204
     })
 );
@@ -27,15 +23,12 @@ const sessionOptions = {
     secret: process.env.SESSION_SECRET || "kambaz",
     resave: false,
     saveUninitialized: false,
-};
-if (process.env.NODE_ENV !== "development") {
-    sessionOptions.proxy = true;
-    sessionOptions.cookie = {
+    proxy: true,
+    cookie: {
         sameSite: "none",
-        secure: true,
-        domain: process.env.NODE_SERVER_DOMAIN,
-    };
-}
+        secure: true
+    }
+};
 app.use(session(sessionOptions));
 app.use(express.json());
 
