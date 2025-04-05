@@ -14,8 +14,7 @@ app.use(
         credentials: true,
         origin: [
             process.env.NETLIFY_URL || "http://localhost:5173",
-            "https://a5--kambaz-react-web-app-yw.netlify.app",
-            "https://kambaz-react-web-app-yw.netlify.app"
+            "https://a5--kambaz-react-web-app-yw.netlify.app"
         ],
     })
 );
@@ -27,11 +26,14 @@ const sessionOptions = {
     cookie: {
         sameSite: "none",
         secure: true,
-        maxAge: 24 * 60 * 60 * 1000 // 24 hours
     }
 };
 if (process.env.NODE_ENV !== "development") {
     sessionOptions.proxy = true;
+    sessionOptions.cookie = {
+        sameSite: "none",
+        secure: true,
+    };
 }
 app.use(session(sessionOptions));
 app.use(express.json());
