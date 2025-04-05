@@ -14,7 +14,8 @@ app.use(
         credentials: true,
         origin: [
             process.env.NETLIFY_URL || "http://localhost:5173",
-            "https://a5--kambaz-react-web-app-yw.netlify.app"
+            "https://a5--kambaz-react-web-app-yw.netlify.app",
+            "https://kambaz-react-web-app-yw.netlify.app"
         ],
     })
 );
