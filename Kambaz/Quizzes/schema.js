@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 const quizzesSchema = new mongoose.Schema({
     _id: { type: String, index: false},
     title: { type: String, required: true},
-    course: { type: mongoose.Schema.Types.ObjectId, ref: "CourseModel" },
+    course: { type: String, ref: "CourseModel" },
     due: String,
     availableFrom: String,
     availableUntil: String,
