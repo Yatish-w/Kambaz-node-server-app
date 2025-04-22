@@ -13,16 +13,11 @@ export default function QueryParameters(app) {
                 result = parseInt(a) * parseInt(b);
                 break;
             case "divide":
-                if (b == 0) {
-                    res.status(400).send("Error: Division by zero is not allowed");
-                    return;
-                }
                 result = parseInt(a) / parseInt(b);
                 break;
             default:
-            result = "Invalid operation";
+                result = "Invalid operation";
         }
         res.send(result.toString());
     });
 }
-  

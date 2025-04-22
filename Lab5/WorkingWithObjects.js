@@ -1,17 +1,13 @@
 const assignment = {
-    id: 1, 
-    title: "NodeJS Assignment",
+    id: 1, title: "NodeJS Assignment",
     description: "Create a NodeJS server with ExpressJS",
     due: "2021-10-10", completed: false, score: 0,
 };
-
-const modules = {
-    id: "M101",
-    name: "Introduction to Rocket Propulsion",
-    description: "Basic principles of rocket propulsion and rocket engines.",
-    course: "RS101",
+const module = {
+    id: 1, name: "NodeJS Module",
+    description: "Create a NodeJS server with ExpressJS",
+    course: "Web Dev",
 }
-
 export default function WorkingWithObjects(app) {
     app.get("/lab5/assignment", (req, res) => {
         res.json(assignment);
@@ -23,32 +19,32 @@ export default function WorkingWithObjects(app) {
         const { newTitle } = req.params;
         assignment.title = newTitle;
         res.json(assignment);
-    }); 
+    });
     app.get("/lab5/assignment/score/:newScore", (req, res) => {
         const { newScore } = req.params;
-        assignment.score = parseInt(newScore);
+        assignment.score = newScore;
         res.json(assignment);
     });
-    app.get("/lab5/assignment/completed/:newCompleted", (req, res) => {
-        const { newCompleted } = req.params;
-        assignment.completed = newCompleted === "true";
+    app.get("/lab5/assignment/completed/:newComp", (req, res) => {
+        const { newComp } = req.params;
+        assignment.completed = newComp;
         res.json(assignment);
     });
+
     app.get("/lab5/module", (req, res) => {
-        res.json(modules);
+        res.json(module);
     });
     app.get("/lab5/module/name", (req, res) => {
-        res.json(modules.name);
+        res.json(module.name);
     });
     app.get("/lab5/module/name/:newName", (req, res) => {
         const { newName } = req.params;
-        modules.name = newName;
-        res.json(modules);
+        module.name = newName;
+        res.json(module);
     });
-    app.get("/lab5/module/description/:newDescription", (req, res) => {
-        const { newDescription } = req.params;
-        modules.description = newDescription;
-        res.json(modules);
+    app.get("/lab5/module/description/:newDesc", (req, res) => {
+        const { newDesc } = req.params;
+        module.description = newDesc;
+        res.json(module);
     });
 };
-  
