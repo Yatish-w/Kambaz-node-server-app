@@ -46,13 +46,18 @@ mongoose.connect(CONNECTION_STRING, connectionOptions)
 const app = express();
 console.log("Setting up middleware...");
 
+// Set up CORS with complete configuration
 app.use(cors({
     credentials: true,
-    origin: [
-      process.env.NETLIFY_URL || "http://localhost:3000",
-      "https://project--kambaz-react-web-app-yw.netlify.app"
-    ],
+    origin: ['http://localhost:3000', 'https://project--kambaz-react-web-app-yw.netlify.app'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+    preflightContinue: false,
+    optionsSuccessStatus: 204
 }));
+
+// Handle preflight requests explicitly
+app.options('*', cors());
 
 const sessionOptions = {
     secret: process.env.SESSION_SECRET || "kambaz",
