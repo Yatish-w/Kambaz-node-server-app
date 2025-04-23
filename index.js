@@ -14,8 +14,8 @@ import AssignmentRoutes from './Kambaz/Assignments/routes.js';
 import QuizRoutes from "./Kambaz/Quizzes/routes.js";
 
 // Make the database name more explicit
-const DB_NAME = "kambaz";
-const CONNECTION_STRING = process.env.MONGO_CONNECTION_STRING || `mongodb://127.0.0.1:27017/kambaz`;
+const DB_NAME = "Kambaz";
+const CONNECTION_STRING = process.env.MONGO_CONNECTION_STRING || `mongodb://127.0.0.1:27017/Kambaz`;
 
 console.log("Attempting to connect to MongoDB...");
 console.log("Connection string:", CONNECTION_STRING);
@@ -23,15 +23,6 @@ console.log("Environment variables:", {
   MONGO_CONNECTION_STRING: process.env.MONGO_CONNECTION_STRING,
   NODE_ENV: process.env.NODE_ENV
 });
-
-// Create a simple schema for testing
-const TestSchema = new mongoose.Schema({
-  name: String,
-  timestamp: { type: Date, default: Date.now }
-});
-
-// Create a model
-const Test = mongoose.model('Test', TestSchema);
 
 // Set up connection options to ensure we use the correct database
 const connectionOptions = {
@@ -46,25 +37,6 @@ mongoose.connect(CONNECTION_STRING, connectionOptions)
     console.log("MongoDB connection state:", mongoose.connection.readyState);
     console.log("MongoDB host:", mongoose.connection.host);
     console.log("MongoDB database:", mongoose.connection.name);
-    
-    // Try to create a document
-    try {
-      const testDoc = new Test({ name: "Connection Test" });
-      await testDoc.save();
-      console.log("Successfully created a test document");
-      
-      // Try to find the document
-      const foundDoc = await Test.findOne({ name: "Connection Test" });
-      console.log("Successfully retrieved the test document:", foundDoc);
-      
-      // Clean up - delete the test document
-      await Test.deleteOne({ name: "Connection Test" });
-      console.log("Successfully deleted the test document");
-      
-      console.log("MongoDB connection test completed successfully!");
-    } catch (error) {
-      console.error("Error during database operations:", error);
-    }
   })
   .catch(err => {
     console.error("Failed to connect to MongoDB:", err);
