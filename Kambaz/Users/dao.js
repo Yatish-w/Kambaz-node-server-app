@@ -1,10 +1,39 @@
 //import db from "../Database/index.js";
 import model from "./model.js";
+import mongoose from "mongoose";
 //let { users } = db;
-export const createUser = (user) => {
-    delete user._id
-    return model.create(user);
+
+// Helper to generate a unique ID
+const generateUniqueId = () => new mongoose.Types.ObjectId().toString();
+
+export const createUser = async (user) => {
+    try {
+        // If no _id provided, generate one
+        if (!user._id) {
+            user._id = generateUniqueId();
+        }
+        console.log("Creating user with data:", {
+            username: user.username,
+            role: user.role,
+            _id: user._id
+        });
+        
+        // Handle potential validation issues before creating
+        if (!user.username || !user.password) {
+            throw new Error("Username and password are required");
+        }
+        
+        return await model.create(user);
+    } catch (error) {
+        console.error("Error in createUser:", error.message);
+        // If it's a duplicate key error (username already exists)
+        if (error.code === 11000) {
+            throw new Error("Username already exists");
+        }
+        throw error; // Re-throw for the caller to handle
+    }
 };
+
 export const findAllUsers = () => model.find();
 export const findUserById = (userId) => model.findById(userId);
 export const findUserByUsername = (username) => model.findOne({ username: username });

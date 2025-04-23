@@ -73,19 +73,36 @@ export default function UserRoutes(app) {
     const signup = async (req, res) => {
         try {
             console.log("Signup attempt with:", req.body.username);
-            const user = await dao.findUserByUsername(req.body.username);
-            if (user) {
-                console.log("Username already exists:", req.body.username);
-                res.status(400).json({ message: "Username already in use" });
-                return;
+            
+            // Validate required fields
+            if (!req.body.username || !req.body.password) {
+                return res.status(400).json({ 
+                    message: "Username and password are required" 
+                });
             }
-            const currentUser = await dao.createUser(req.body);
+            
+            // Check if username exists
+            const existingUser = await dao.findUserByUsername(req.body.username);
+            if (existingUser) {
+                console.log("Username already exists:", req.body.username);
+                return res.status(400).json({ 
+                    message: "Username already in use" 
+                });
+            }
+            
+            // Create the user
+            const userData = { ...req.body };
+            const currentUser = await dao.createUser(userData);
             console.log("New user created:", currentUser.username);
+            
+            // Set session
             req.session["currentUser"] = currentUser;
-            res.json(currentUser);
+            return res.json(currentUser);
         } catch (error) {
-            console.error("Error during signup:", error);
-            res.status(500).json({ message: "Error during signup" });
+            console.error("Error during signup:", error.message);
+            return res.status(500).json({ 
+                message: `Error during signup: ${error.message}` 
+            });
         }
     };
 
