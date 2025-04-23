@@ -48,7 +48,10 @@ console.log("Setting up middleware...");
 
 app.use(cors({
     credentials: true,
-    origin: process.env.NETLIFY_URL || "http://localhost:3000",
+    origin: [
+      process.env.NETLIFY_URL || "http://localhost:3000",
+      "https://project--kambaz-react-web-app-yw.netlify.app"
+    ],
 }));
 
 const sessionOptions = {
@@ -63,6 +66,7 @@ if (process.env.NODE_ENV !== "development") {
         sameSite: "none",
         secure: true,
         domain: process.env.NODE_SERVER_DOMAIN,
+        maxAge: 24 * 60 * 60 * 1000 // 24 hours
     };
 }
 
