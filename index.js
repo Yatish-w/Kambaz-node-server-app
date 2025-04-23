@@ -60,21 +60,25 @@ app.use(cors({
 app.options('*', cors());
 
 const sessionOptions = {
-    secret: process.env.SESSION_SECRET || "kambaz",
+    secret: process.env.SESSION_SECRET || "Kambaz",
     resave: false,
     saveUninitialized: false,
+    cookie: {
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    }
 };
 
 if (process.env.NODE_ENV !== "development") {
     sessionOptions.proxy = true;
-    sessionOptions.cookie = {
-        sameSite: "none",
-        secure: true,
-        domain: process.env.NODE_SERVER_DOMAIN,
-        maxAge: 24 * 60 * 60 * 1000 // 24 hours
-    };
+    sessionOptions.cookie.sameSite = "none";
+    sessionOptions.cookie.secure = true;
+} else {
+    // For local development
+    console.log("Using development session settings");
 }
 
+console.log("Session options:", sessionOptions);
 app.use(session(sessionOptions));
 app.use(express.json());
 

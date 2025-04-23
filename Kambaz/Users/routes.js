@@ -248,11 +248,12 @@ export default function UserRoutes(app) {
     app.post("/api/users/signup", signup);
     app.post("/api/users/signin", signin);
     app.post("/api/users/signout", signout);
+    app.get("/api/users/profile", profile);
     app.post("/api/users/profile", profile);
     app.get("/api/users/:uid/courses", findCoursesForUser);
-    app.post("/api/users/current/courses", createCourse);
     app.post("/api/users/:uid/courses/:cid", enrollUserInCourse);
     app.delete("/api/users/:uid/courses/:cid", unenrollUserFromCourse);
+    app.post("/api/users/current/courses", createCourse);
     
     // Add a test route for debugging
     app.get("/api/users/test-auth", async (req, res) => {
